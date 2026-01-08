@@ -1,186 +1,215 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8" />
-<title>Đếm ngược Tết Âm 🧧</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>Tết Âm Countdown 🐉🦚</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-:root {
-  --red: #b30000;
-  --gold: #ffd700;
-}
-
-* {
-  box-sizing: border-box;
-  font-family: "Segoe UI", system-ui, sans-serif;
-}
-
-body {
+html, body {
   margin: 0;
-  height: 100vh;
-  background:
-    radial-gradient(circle at top, #ffeb99, #b30000 70%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 0;
+  background: radial-gradient(circle at top, #ffef9f, #9b0000 70%);
   overflow: hidden;
-  color: white;
+  color: #ffd700;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
 }
 
-.container {
+#ui {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.35);
+  padding: 26px 28px;
+  border-radius: 24px;
+  box-shadow: 0 0 40px rgba(255,215,0,0.7);
   text-align: center;
-  padding: 30px 20px;
-  background: rgba(0,0,0,0.25);
-  border-radius: 20px;
-  box-shadow: 0 0 40px rgba(255,215,0,0.6);
-  animation: float 4s ease-in-out infinite;
+  z-index: 10;
 }
 
 h1 {
-  font-size: 2.2rem;
-  margin-bottom: 10px;
-  color: var(--gold);
-  text-shadow: 0 0 10px rgba(255,215,0,0.9);
+  margin: 0 0 10px;
+  text-shadow: 0 0 15px rgba(255,215,0,0.9);
 }
 
 .subtitle {
-  font-size: 1rem;
+  margin-bottom: 20px;
   opacity: 0.9;
-  margin-bottom: 25px;
 }
 
 .countdown {
   display: flex;
   gap: 14px;
   justify-content: center;
-  flex-wrap: wrap;
 }
 
 .box {
   min-width: 90px;
-  padding: 14px 10px;
-  background: linear-gradient(180deg, #ff3333, #990000);
-  border-radius: 14px;
-  box-shadow:
-    inset 0 0 10px rgba(255,255,255,0.2),
-    0 0 15px rgba(255,215,0,0.6);
-  animation: pulse 1s infinite alternate;
+  padding: 12px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ff3333, #7a0000);
+  box-shadow: inset 0 0 12px rgba(255,255,255,0.2),
+              0 0 18px rgba(255,215,0,0.6);
 }
 
 .value {
-  font-size: 2.2rem;
+  font-size: 2.1rem;
   font-weight: bold;
 }
 
 .label {
   font-size: 0.75rem;
-  margin-top: 4px;
-  opacity: 0.9;
 }
 
-.footer {
-  margin-top: 25px;
-  font-size: 0.9rem;
-  opacity: 0.85;
+#musicBtn {
+  margin-top: 16px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: #ffd700;
+  color: #7a0000;
+  font-weight: bold;
 }
 
-@keyframes pulse {
-  from { transform: scale(1); }
-  to { transform: scale(1.05); }
-}
-
-@keyframes float {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
-/* pháo hoa */
-.firework {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  background: var(--gold);
-  border-radius: 50%;
-  animation: explode 1.5s linear infinite;
-  opacity: 0;
-}
-
-@keyframes explode {
-  0% { transform: scale(0); opacity: 1; }
-  100% { transform: scale(15); opacity: 0; }
+canvas {
+  display: block;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-  <h1>🧧 Đếm ngược Tết Âm 🧧</h1>
-  <div class="subtitle">Tết đến là về, lì xì là mê</div>
+<canvas id="canvas"></canvas>
+
+<div id="ui">
+  <h1>🧧 Đếm Ngược Tết Âm 🧧</h1>
+  <div class="subtitle">Rồng bay – Phượng múa – Xuân về</div>
 
   <div class="countdown">
-    <div class="box">
-      <div class="value" id="days">0</div>
-      <div class="label">Ngày</div>
-    </div>
-    <div class="box">
-      <div class="value" id="hours">0</div>
-      <div class="label">Giờ</div>
-    </div>
-    <div class="box">
-      <div class="value" id="minutes">0</div>
-      <div class="label">Phút</div>
-    </div>
-    <div class="box">
-      <div class="value" id="seconds">0</div>
-      <div class="label">Giây</div>
-    </div>
+    <div class="box"><div class="value" id="d">0</div><div class="label">Ngày</div></div>
+    <div class="box"><div class="value" id="h">00</div><div class="label">Giờ</div></div>
+    <div class="box"><div class="value" id="m">00</div><div class="label">Phút</div></div>
+    <div class="box"><div class="value" id="s">00</div><div class="label">Giây</div></div>
   </div>
 
-  <div class="footer">✨ Chúc mừng năm mới an khang thịnh vượng ✨</div>
+  <button id="musicBtn">🎵 Bật nhạc Tết</button>
 </div>
 
+<audio id="music" loop>
+  <!-- bạn có thể thay link nhạc khác -->
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_4c1c7c4e5c.mp3" type="audio/mpeg">
+</audio>
+
 <script>
-/*
-  👉 ĐỔI NGÀY TẾT Ở ĐÂY
-  Format: new Date("YYYY-MM-DDTHH:mm:ss")
-*/
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+resize();
+window.addEventListener("resize", resize);
+
+function resize() {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
+
+/* ================= COUNTDOWN ================= */
 const tetDate = new Date("2026-02-17T00:00:00");
 
 function updateCountdown() {
-  const now = new Date();
-  const diff = tetDate - now;
+  const diff = tetDate - new Date();
+  if (diff <= 0) return;
 
-  if (diff <= 0) {
-    document.querySelector(".subtitle").innerText = "🎉 TẾT ĐẾN RỒI 🎉";
-    return;
-  }
-
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((diff / (1000 * 60)) % 60);
-  const seconds = Math.floor((diff / 1000) % 60);
-
-  document.getElementById("days").innerText = days;
-  document.getElementById("hours").innerText = hours.toString().padStart(2,"0");
-  document.getElementById("minutes").innerText = minutes.toString().padStart(2,"0");
-  document.getElementById("seconds").innerText = seconds.toString().padStart(2,"0");
+  d.innerText = Math.floor(diff / 86400000);
+  h.innerText = Math.floor(diff / 3600000 % 24).toString().padStart(2,"0");
+  m.innerText = Math.floor(diff / 60000 % 60).toString().padStart(2,"0");
+  s.innerText = Math.floor(diff / 1000 % 60).toString().padStart(2,"0");
 }
-
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
-// pháo hoa ngẫu nhiên
-setInterval(() => {
-  const fw = document.createElement("div");
-  fw.className = "firework";
-  fw.style.left = Math.random() * window.innerWidth + "px";
-  fw.style.top = Math.random() * window.innerHeight + "px";
-  document.body.appendChild(fw);
+/* ================= MUSIC ================= */
+const music = document.getElementById("music");
+const btn = document.getElementById("musicBtn");
+let playing = false;
 
-  setTimeout(() => fw.remove(), 1500);
-}, 500);
+btn.onclick = () => {
+  playing ? music.pause() : music.play();
+  playing = !playing;
+  btn.innerText = playing ? "⏸ Tắt nhạc" : "🎵 Bật nhạc Tết";
+};
+
+/* ================= FIREWORK ================= */
+class Particle {
+  constructor(x,y,color) {
+    this.x=x; this.y=y;
+    this.vx=(Math.random()-0.5)*6;
+    this.vy=(Math.random()-0.5)*6;
+    this.life=60;
+    this.color=color;
+  }
+  update() {
+    this.x+=this.vx;
+    this.y+=this.vy;
+    this.vy+=0.05;
+    this.life--;
+  }
+  draw() {
+    ctx.fillStyle=this.color;
+    ctx.fillRect(this.x,this.y,2,2);
+  }
+}
+
+let fireworks=[];
+setInterval(()=>{
+  const x=Math.random()*canvas.width;
+  const y=Math.random()*canvas.height*0.5;
+  const colors=["#ffd700","#ff3333","#ff9900"];
+  for(let i=0;i<80;i++){
+    fireworks.push(new Particle(x,y,colors[Math.floor(Math.random()*3)]));
+  }
+},1200);
+
+/* ================= DRAGON & PHOENIX ================= */
+let t=0;
+function drawDragon() {
+  ctx.strokeStyle="#ffd700";
+  ctx.lineWidth=4;
+  ctx.beginPath();
+  for(let i=0;i<40;i++){
+    const x=i*25 + (t%canvas.width)-200;
+    const y=200 + Math.sin((i+t*0.05))*40;
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+}
+
+function drawPhoenix() {
+  ctx.strokeStyle="#ff8800";
+  ctx.lineWidth=3;
+  ctx.beginPath();
+  for(let i=0;i<30;i++){
+    const x=canvas.width - i*28 - (t%canvas.width)+200;
+    const y=canvas.height-200 + Math.cos((i+t*0.06))*35;
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+}
+
+/* ================= LOOP ================= */
+function loop() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  drawDragon();
+  drawPhoenix();
+
+  fireworks = fireworks.filter(p=>p.life>0);
+  fireworks.forEach(p=>{p.update();p.draw();});
+
+  t+=2;
+  requestAnimationFrame(loop);
+}
+loop();
 </script>
 
 </body>
