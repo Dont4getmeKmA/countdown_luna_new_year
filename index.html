@@ -1,186 +1,205 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<title>Tết Âm Cinematic 🐉🦚</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-html,body{
-  margin:0;
-  padding:0;
-  overflow:hidden;
-  background:radial-gradient(circle at top,#fff2a8,#7a0000 70%);
-  font-family:system-ui;
-  color:#ffd700;
-}
-canvas{display:block}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đếm Ngược Tết Bính Ngọ 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        :root {
+            --gold: #FFD700;
+            --red: #EE0000;
+            --dark-red: #8B0000;
+        }
 
-#ui{
-  position:absolute;
-  top:16%;
-  left:50%;
-  transform:translateX(-50%);
-  background:rgba(0,0,0,.4);
-  padding:28px 32px;
-  border-radius:26px;
-  box-shadow:0 0 60px rgba(255,215,0,.8);
-  text-align:center;
-  z-index:10;
-}
-h1{
-  margin:0 0 10px;
-  font-size:1.8rem;
-  text-shadow:0 0 20px rgba(255,215,0,1);
-}
-.subtitle{
-  opacity:.9;
-  margin-bottom:20px;
-}
-.countdown{
-  display:flex;
-  gap:14px;
-}
-.box{
-  min-width:90px;
-  padding:12px;
-  border-radius:16px;
-  background:linear-gradient(180deg,#ff3b3b,#6b0000);
-  box-shadow:inset 0 0 14px rgba(255,255,255,.25),
-             0 0 22px rgba(255,215,0,.7);
-}
-.value{font-size:2.1rem;font-weight:bold}
-.label{font-size:.75rem}
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, var(--red), var(--dark-red));
+            color: var(--gold);
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            perspective: 1000px;
+        }
 
-#musicBtn{
-  margin-top:16px;
-  padding:8px 18px;
-  border-radius:999px;
-  border:none;
-  background:#ffd700;
-  color:#7a0000;
-  font-weight:bold;
-  cursor:pointer;
-}
-</style>
+        /* Hiệu ứng hoa rơi */
+        .petals-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+            margin-bottom: 30px;
+            animation: bounce 2s infinite;
+            z-index: 10;
+        }
+
+        .countdown {
+            display: flex;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--gold);
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 80px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .box span {
+            display: block;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: #fff;
+            text-shadow: 0 0 10px var(--gold);
+        }
+
+        .box label {
+            font-size: 0.8rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Animations */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        .lantern {
+            position: absolute;
+            top: -20px;
+            width: 50px;
+            height: 70px;
+            background: var(--red);
+            border: 3px solid var(--gold);
+            border-radius: 40%;
+            box-shadow: 0 0 30px var(--gold);
+            animation: swing 4s ease-in-out infinite;
+            transform-origin: top center;
+        }
+
+        @keyframes swing {
+            0% { transform: rotate(-15deg); }
+            50% { transform: rotate(15deg); }
+            100% { transform: rotate(-15deg); }
+        }
+    </style>
 </head>
-
 <body>
-<canvas id="c"></canvas>
 
-<div id="ui">
-  <h1>🧧 Đếm Ngược Tết Âm 🧧</h1>
-  <div class="subtitle">Rồng bay – Phượng múa – Pháo hoa rực trời</div>
-  <div class="countdown">
-    <div class="box"><div class="value" id="d">0</div><div class="label">Ngày</div></div>
-    <div class="box"><div class="value" id="h">00</div><div class="label">Giờ</div></div>
-    <div class="box"><div class="value" id="m">00</div><div class="label">Phút</div></div>
-    <div class="box"><div class="value" id="s">00</div><div class="label">Giây</div></div>
-  </div>
-  <button id="musicBtn">🎵 Bật nhạc</button>
-</div>
+    <div class="petals-container" id="petals"></div>
 
-<audio id="music" loop>
-  <source src="https://cdn.pixabay.com/audio/2023/01/31/audio_eb38a5d9f3.mp3">
-</audio>
+    <div class="lantern" style="left: 15%"></div>
+    <div class="lantern" style="right: 15%; animation-delay: 1.5s"></div>
 
-<script>
-/* ================= SETUP ================= */
-const c=document.getElementById("c"),ctx=c.getContext("2d");
-function resize(){c.width=innerWidth;c.height=innerHeight}
-addEventListener("resize",resize);resize();
+    <h1>Tết Bính Ngọ 2026</h1>
 
-/* ================= COUNTDOWN ================= */
-const tet=new Date("2026-02-17T00:00:00");
-setInterval(()=>{
-  const t=tet-new Date(); if(t<=0)return;
-  d.innerText=Math.floor(t/864e5);
-  h.innerText=Math.floor(t/36e5%24).toString().padStart(2,"0");
-  m.innerText=Math.floor(t/6e4%60).toString().padStart(2,"0");
-  s.innerText=Math.floor(t/1e3%60).toString().padStart(2,"0");
-},1000);
+    <div class="countdown">
+        <div class="box">
+            <span id="days">00</span>
+            <label>Ngày</label>
+        </div>
+        <div class="box">
+            <span id="hours">00</span>
+            <label>Giờ</label>
+        </div>
+        <div class="box">
+            <span id="mins">00</span>
+            <label>Phút</label>
+        </div>
+        <div class="box">
+            <span id="secs">00</span>
+            <label>Giây</label>
+        </div>
+    </div>
 
-/* ================= MUSIC ================= */
-const music=document.getElementById("music");
-const btn=document.getElementById("musicBtn");
-let play=false;
-btn.onclick=()=>{
-  play?music.pause():music.play();
-  play=!play;
-  btn.innerText=play?"⏸ Tắt nhạc":"🎵 Bật nhạc";
-};
+    <h2 style="margin-top: 40px; font-weight: 300; z-index: 10;">🧨 Cung Chúc Tân Xuân 🧧</h2>
 
-/* ================= FIREWORK ================= */
-class Spark{
-  constructor(x,y,col){
-    this.x=x;this.y=y;
-    this.vx=(Math.random()-.5)*7;
-    this.vy=(Math.random()-.5)*7;
-    this.life=80;
-    this.col=col;
-  }
-  update(){
-    this.x+=this.vx;
-    this.y+=this.vy;
-    this.vy+=.08;
-    this.life--;
-  }
-  draw(){
-    ctx.fillStyle=this.col;
-    ctx.fillRect(this.x,this.y,2,2);
-  }
-}
-let sparks=[];
-setInterval(()=>{
-  const x=Math.random()*c.width;
-  const y=Math.random()*c.height*.5;
-  const cols=["#ffd700","#ff3b3b","#ff9900"];
-  for(let i=0;i<120;i++){
-    sparks.push(new Spark(x,y,cols[i%3]));
-  }
-},1400);
+    <script>
+        // MỐC THỜI GIAN: Tết Âm Lịch 2026 (17/02/2026)
+        const targetDate = new Date('February 17, 2026 00:00:00').getTime();
 
-/* ================= DRAGON ================= */
-let t=0;
-function dragon(){
-  ctx.strokeStyle="#ffd700";
-  ctx.lineWidth=5;
-  ctx.beginPath();
-  for(let i=0;i<50;i++){
-    const px=i*30+(t% (c.width+400))-300;
-    const py=c.height*.3+Math.sin((i+t*.05))*60;
-    i?ctx.lineTo(px,py):ctx.moveTo(px,py);
-  }
-  ctx.stroke();
-}
+        function update() {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
 
-/* ================= PHOENIX ================= */
-function phoenix(){
-  ctx.strokeStyle="#ff8800";
-  ctx.lineWidth=4;
-  ctx.beginPath();
-  for(let i=0;i<40;i++){
-    const px=c.width-i*32-(t% (c.width+400))+300;
-    const py=c.height*.65+Math.cos((i+t*.06))*55;
-    i?ctx.lineTo(px,py):ctx.moveTo(px,py);
-  }
-  ctx.stroke();
-}
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-/* ================= LOOP ================= */
-function loop(){
-  ctx.fillStyle="rgba(0,0,0,.15)";
-  ctx.fillRect(0,0,c.width,c.height);
+            document.getElementById('days').innerText = d.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+            document.getElementById('mins').innerText = m.toString().padStart(2, '0');
+            document.getElementById('secs').innerText = s.toString().padStart(2, '0');
+        }
 
-  dragon();
-  phoenix();
+        setInterval(update, 1000);
+        update();
 
-  sparks=sparks.filter(p=>p.life>0);
-  sparks.forEach(p=>{p.update();p.draw();});
+        // BẮN PHÁO HOA LIÊN TỤC
+        const fire = () => {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#FFD700', '#FF0000', '#FFFFFF', '#FF4500']
+            });
+        };
 
-  t+=2.2;
-  requestAnimationFrame(loop);
-}
-loop();
-</script>
+        // Bắn pháo tự động mỗi 3 giây
+        setInterval(fire, 3000);
+        setTimeout(fire, 500); // Bắn phát đầu khi load
+
+        // HIỆU ỨNG HOA MAI RƠI
+        const petals = document.getElementById('petals');
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.style.position = 'absolute';
+            petal.style.width = '15px';
+            petal.style.height = '15px';
+            petal.style.background = '#FFD700'; // Hoa mai vàng
+            petal.style.borderRadius = '50% 0 50% 0';
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.top = '-20px';
+            petal.style.opacity = Math.random();
+            petal.style.transform = `rotate(${Math.random() * 360}deg)`;
+            
+            petals.appendChild(petal);
+
+            const animation = petal.animate([
+                { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
+                { transform: `translate(${Math.random() * 100 - 50}px, 100vh) rotate(720deg)`, opacity: 0 }
+            ], {
+                duration: Math.random() * 3000 + 5000,
+                easing: 'linear'
+            });
+
+            animation.onfinish = () => petal.remove();
+        }
+        setInterval(createPetal, 200);
+
+    </script>
 </body>
 </html>
